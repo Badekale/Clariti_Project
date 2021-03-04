@@ -13,6 +13,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output,State
 import dash_bootstrap_components as dbc
 import spacy
+import en_core_web_sm as en
 import base64 ; import datetime
 
 
@@ -22,7 +23,7 @@ app.title = 'Clariti Requirement'
 # if the model as be downloaded already you dont have to download it again
 #"https://tfhub.dev/google/universal-sentence-encoder/4"
 
-module_url = './tfhub_modules/063d866c06683311b44b4992fd46003be952409c'
+module_url = 'https://tfhub.dev/google/universal-sentence-encoder/4'
 
 # Import the Universal Sentence Encoder's TF Hub module
 model = hub.load(module_url)
@@ -63,9 +64,10 @@ def remove_stopwords(tokenized_text):
     return text
  
 
-nlp = spacy.load('en', disable=['parser', 'ner'])
+nlp = en.load(disable=['parser', 'ner'])
 
 def clean(aa):
+    aa=str(aa)
     aa = aa.lower()
     aa = remove_stopwords(aa)
     aa = re.sub('[%s]' % re.escape('/-()'), ' ', aa)
@@ -93,19 +95,10 @@ def parse_contents(contents, filename):
     content_type, content_string = contents.split(',')
     decoded = base64.b64decode(content_string)
     df = pd.read_csv(io.StringIO(decoded.decode('utf-8')),names=['capa'])
-    # try:
-    #     if 'csv' in filename:
-    #         # Assume that the user uploaded a CSV file
-    #         df = pd.read_csv(
-    #             io.StringIO(decoded.decode('utf-8')))
-    #     elif 'xls' in filename:
-    #         # Assume that the user uploaded an excel file
-    #         df = pd.read_excel(io.BytesIO(decoded),header= None)
-    # except Exception as e:
-    #     print(e)
-    #     return html.Div([
-    #         'There was an error processing this file.'
-    #     ])
+    if df.shape[1] ==1:
+        df.columns=['capa']
+    elif df.shape[1] ==2:
+        df.columns=['Index','capa']
     return filename,df
 
 app.layout = html.Div(style={'background-color':'#124654' },children=[header1,
