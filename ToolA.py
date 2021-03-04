@@ -13,6 +13,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 import spacy
+import en_core_web_sm as en
 import base64 ; import datetime
 
 
@@ -23,7 +24,7 @@ app.title = 'Clariti ToolA'
 # os.environ['KMP_DUPLICATE_LIB_OK']='True'
 # the model google universal-sentence-encoder can be downloaded from this link
 #"https://tfhub.dev/google/universal-sentence-encoder/4"
-module_url = './tfhub_modules/063d866c06683311b44b4992fd46003be952409c'
+module_url = 'https://tfhub.dev/google/universal-sentence-encoder/4'
 
 # Import the Universal Sentence Encoder's TF Hub module
 model = hub.load(module_url)
@@ -72,7 +73,7 @@ def get_wordnet_pos(word):
                 "R": wordnet.ADV}
 
     return tag_dict.get(tag, wordnet.NOUN)
-nlp = spacy.load('en', disable=['parser', 'ner'])
+nlp = en.load(disable=['parser', 'ner'])
 
 def clean(aa):
     aa = aa.lower()
