@@ -16,4 +16,4 @@ spacy==2.3.5
 tensorflow==2.0.0
 tensorflow-hub==0.8.0
 dash-uploader==0.4.1
-
+# test cli push
